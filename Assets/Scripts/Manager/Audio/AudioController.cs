@@ -13,7 +13,10 @@ public class AudioController : IUpdatable
 
     public void Update()
     {
-
+        if(!this.m_audioSource.isPlaying && !this.m_paused)
+        {
+            this._Complete();
+        }
     }
 
     public void PlayClip(AudioClip clip,float volume = 1f, float delay = 0f, float pitch = 1f)
@@ -60,7 +63,10 @@ public class AudioController : IUpdatable
 
     private void _OnComplete()
     {
-
+        if(this.complete != null)
+        {
+            this.complete(this);
+        }
     }
 
     private void _SetVolume(float value)
