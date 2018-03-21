@@ -13,18 +13,10 @@ public class AudioManager : MonoBehaviourSingleton<AudioManager>
         UnityEngine.Object.DontDestroyOnLoad(base.transform.gameObject);
         base.gameObject.AddComponent<AudioListener>();
     }
-    public float volume;
-    private float _getVolume()
-    {
-        return volume;
-    }
+
     private void Start()
     {
-        Tweener volumeTweener = DOTween.To(new DOGetter<float>(this._getVolume), delegate (float x)
-         {
-             this.volume = x;
-         }, 0.5f, 1.0f
-        );
+        
     }
 
     private void Update()
@@ -36,7 +28,7 @@ public class AudioManager : MonoBehaviourSingleton<AudioManager>
     {
         get
         {
-            return m_musicVolume;
+            return m_MusicVolume;
         }
         set
         {
@@ -48,7 +40,7 @@ public class AudioManager : MonoBehaviourSingleton<AudioManager>
     {
         get
         {
-            return m_sfxVolume;
+            return m_SfxVolume;
         }
         set
         {
@@ -68,7 +60,7 @@ public class AudioManager : MonoBehaviourSingleton<AudioManager>
     {
         get
         {
-            return m_musicMuted;
+            return m_MusicMuted;
         }
         set
         {
@@ -81,7 +73,7 @@ public class AudioManager : MonoBehaviourSingleton<AudioManager>
     {
         get
         {
-            return m_sfxMuted;
+            return m_SfxMuted;
         }
         set
         {
@@ -90,7 +82,103 @@ public class AudioManager : MonoBehaviourSingleton<AudioManager>
     }
 
     //播放音效
+    public AudioController PlaySfx(string audioName,float volume = 1f,float delay = 0f,float pitch = 1f,bool loop = false,bool dispatchEvent = false)
+    {
+        if(this.m_SfxAudioNamePlayedThisFrame.Contains(audioName))
+        {
+            return null;
+        }
+        this.m_SfxAudioNamePlayedThisFrame.Add(audioName);
+        AudioController audioController = this._CreateAudioControlelr(audioName, loop);
+        audioController.complete += this._HandleAudioControllerCompleted;
+        this.m_SfxControllers.Add(audioController);
+        audioController.MasterVolume = this.sfxVolume;
+        audioController.Muted = this.sfxMuted;
+        if(!this.m_SfxControllerByName.ContainsKey(audioName))
+        {
+            this.m_SfxControllerByName.Add(audioName, new List<AudioController>());
+        }
+        this.m_SfxControllerByName[audioName].Add(audioController);
+        return audioController;
+    }
 
+    public void StopAllSfx()
+    {
+        foreach(var audioController in this.m_SfxControllers)
+        {
+            if(audioController != null)
+            {
+                audioController.complete -= this._HandleAudioControllerCompleted;
+                audioController.Stop();
+            }
+        }
+        this.m_SfxControllers.Clear();
+    }
+
+    public void PauseAllSfx()
+    {
+        foreach(var audioController in this.m_SfxControllers)
+        {
+            if(audioController != null)
+            {
+                audioController.Pause();
+            }
+        }
+    }
+
+    public void ResumeAllSfx()
+    {
+        foreach(var audioController in this.m_SfxControllers)
+        {
+            if(audioController != null)
+            {
+                audioController.Resume();
+            }
+        }
+    }
+
+    public void PlayMusic(string audioName,float volume = 1f,float delay = 0f,bool loop = true)
+    {
+        if(this.m_MusicControllers.ContainsKey(audioName))
+        {
+
+        }
+    }
+    
+    //控制音乐播放音量的Tweener
+    public void TweenMusicVolume(float targetVolume, float time)
+    {
+        this.KillMusicVolumeTween();
+        this.m_MusicVolumeTweener = DOTween.To(delegate() { return this.m_MusicVolume; }, delegate (float x)
+        {
+            this.musicVolume = x;
+        }, targetVolume, time).SetUpdate(true);
+    }
+
+    public void KillMusicVolumeTween()
+    {
+        if (this.m_MusicVolumeTweener != null && this.m_MusicVolumeTweener.IsActive())
+        {
+            this.m_MusicVolumeTweener.Kill(false);
+        }
+        this.m_MusicVolumeTweener = null;
+    }
+
+    public void PauseMusicVolumeTween()
+    {
+        if (this.m_MusicVolumeTweener != null)
+        {
+            this.m_MusicVolumeTweener.Pause<Tweener>();
+        }
+    }
+
+    public void UnpauseMusicVolumeTween()
+    {
+        if (this.m_MusicVolumeTweener != null)
+        {
+            this.m_MusicVolumeTweener.Play<Tweener>();
+        }
+    }
 
     //设置背景音乐音量
     private void _SetMusicVolume(float value)
@@ -110,29 +198,65 @@ public class AudioManager : MonoBehaviourSingleton<AudioManager>
     //设置音乐静音或不静音
     private void _SetMusicMuted(bool value)
     {
-        this.m_musicMuted = value;
+        this.m_MusicMuted = value;
 
     }
 
     //设置音效静音或不静音
     private void _SetSfxMuted(bool value)
     {
-        this.m_sfxMuted = value;
+        this.m_SfxMuted = value;
     }
 
-    private float m_musicVolume = 1f;
+    private AudioController _CreateAudioControlelr(string audioName,bool looping = false)
+    {
+        GameObject gameObject = new GameObject();
+        if(audioName != null)
+        {
+            gameObject.name = audioName;
+        }
+        gameObject.transform.parent = base.gameObject.transform;
+        return new AudioController(audioName, gameObject, looping);
+    }
 
-    private float m_sfxVolume = 1f;
+    private void _HandleAudioControllerCompleted(AudioController audioController)
+    {
+        audioController.complete -= this._HandleAudioControllerCompleted;
+        if(this.m_SfxControllers.Contains(audioController))
+        {
+            this.m_SfxControllers.Remove(audioController);
+        }
+        if(this.m_SfxControllerByName.ContainsKey(audioController.audioName))
+        {
+            this.m_SfxControllerByName[audioController.audioName].Remove(audioController);
+        }
+    }
 
-    private bool m_musicMuted;
+    private void _PlayClip(AudioController audioController,string audioName,float volume = 1f,float delay = 0f,float pitch = 1f)
+    {
+        AudioClip clip = (AudioClip)Singleton<ResourceManager>.instance.GetRawObjectByName(audioName);
+        audioController.PlayClip(clip, volume, delay, pitch);
+    }
 
-    private bool m_sfxMuted;
+    private float m_MusicVolume = 1f;
 
-    private List<AudioController> m_SfxController = new List<AudioController>();
+    private float m_SfxVolume = 1f;
 
-    private List<AudioController> m_musicController = new List<AudioController>();
+    private bool m_MusicMuted;
 
-    private List<string> m_sfxAudioNamePlayedThisFrame = new List<string>();
+    private bool m_SfxMuted;
 
-    private List<string> m_musicAudioNamePlayerThisFrame = new List<string>();
+    private Tweener m_MusicVolumeTweener;
+
+    private List<AudioController> m_SfxControllers = new List<AudioController>();
+
+    private Dictionary<string, List<AudioController>> m_SfxControllerByName = new Dictionary<string, List<AudioController>>();
+
+    private List<AudioController> m_MusicControllers = new List<AudioController>();
+
+    private Dictionary<string, List<AudioController>> m_MusicControllerByName = new Dictionary<string, List<AudioController>>();
+
+    private List<string> m_SfxAudioNamePlayedThisFrame = new List<string>();
+
+    private List<string> m_MusicAudioNamePlayerThisFrame = new List<string>();
 }

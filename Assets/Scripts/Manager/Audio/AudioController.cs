@@ -6,14 +6,14 @@ public class AudioController : IUpdatable
     public AudioController(string audioNameIn,GameObject audioObject,bool looping = false)
     {
         this.audioName = audioNameIn;
-        this.m_audioSource = audioObject.AddComponent<AudioSource>();
-        this.m_audioSource.loop = looping;
-        this.m_audioSource.playOnAwake = false;
+        this.m_AudioSource = audioObject.AddComponent<AudioSource>();
+        this.m_AudioSource.loop = looping;
+        this.m_AudioSource.playOnAwake = false;
     }
 
     public void Update()
     {
-        if(!this.m_audioSource.isPlaying && !this.m_paused)
+        if(!this.m_AudioSource.isPlaying && !this.m_Paused)
         {
             this._Complete();
         }
@@ -21,36 +21,36 @@ public class AudioController : IUpdatable
 
     public void PlayClip(AudioClip clip,float volume = 1f, float delay = 0f, float pitch = 1f)
     {
-        this.m_audioSource.clip = clip;
-        this.m_audioSource.pitch = pitch;
-        this.m_audioSource.PlayDelayed(delay);
-        this.m_volume = volume;
+        this.m_AudioSource.clip = clip;
+        this.m_AudioSource.pitch = pitch;
+        this.m_AudioSource.PlayDelayed(delay);
+        this.m_Volume = volume;
         this._ChangeVolume();
     }
 
     public void Resume()
     {
-        if(this.m_paused)
+        if(this.m_Paused)
         {
-            this.m_paused = false;
-            this.m_audioSource.UnPause();
+            this.m_Paused = false;
+            this.m_AudioSource.UnPause();
         }
     }
 
     public void Pause()
     {
-        if(!this.m_paused)
+        if(!this.m_Paused)
         {
-            this.m_paused = true;
-            this.m_audioSource.Pause();
+            this.m_Paused = true;
+            this.m_AudioSource.Pause();
         }
     }
 
     public void Stop()
     {
-        if(this.m_audioSource != null)
+        if(this.m_AudioSource != null)
         {
-            this.m_audioSource.Stop();
+            this.m_AudioSource.Stop();
         }
         this._Complete();
     }
@@ -58,7 +58,7 @@ public class AudioController : IUpdatable
     private void _Complete()
     {
         this._OnComplete();
-        UnityEngine.Object.Destroy(this.m_audioSource.gameObject);
+        UnityEngine.Object.Destroy(this.m_AudioSource.gameObject);
     }
 
     private void _OnComplete()
@@ -71,19 +71,25 @@ public class AudioController : IUpdatable
 
     private void _SetVolume(float value)
     {
-        this.m_volume = value;
+        this.m_Volume = value;
+        this._ChangeVolume();
+    }
+
+    private void _SetMasterVolume(float value)
+    {
+        this.m_MasterVolume = value;
         this._ChangeVolume();
     }
 
     private void _SetMuted(bool value)
     {
-        this.m_muted = value ? 0 : 1;
+        this.m_Muted = value ? 0 : 1;
         this._ChangeVolume();
     }
 
     private void _ChangeVolume()
     {
-        this.m_audioSource.volume = this.m_volume * (float)this.m_muted;
+        this.m_AudioSource.volume = this.m_Volume * this.m_MasterVolume * (float)this.m_Muted;
     }
 
 
@@ -95,7 +101,7 @@ public class AudioController : IUpdatable
     {
         get
         {
-            return this.m_volume;
+            return this.m_Volume;
         }
         set
         {
@@ -103,11 +109,23 @@ public class AudioController : IUpdatable
         }
     }
 
+    public float MasterVolume
+    {
+        get
+        {
+            return this.m_MasterVolume;
+        }
+        set
+        {
+            this._SetMasterVolume(value);
+        }
+    }
+
     public bool Muted
     {
         get
         {
-            return this.m_muted == 0;
+            return this.m_Muted == 0;
         }
         set
         {
@@ -115,13 +133,13 @@ public class AudioController : IUpdatable
         }
     }
 
-    private bool m_paused;
+    private bool m_Paused;
 
-    private AudioSource m_audioSource;
+    private AudioSource m_AudioSource;
 
-    private float m_volume = 1f;
+    private float m_Volume = 1f;
 
-    private int m_muted = 1;
+    private float m_MasterVolume = 1f;
 
-
+    private int m_Muted = 1;
 }
