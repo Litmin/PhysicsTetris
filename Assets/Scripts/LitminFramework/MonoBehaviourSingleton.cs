@@ -20,14 +20,15 @@ public class MonoBehaviourSingleton<T> : MonoBehaviour where T : MonoBehaviourSi
             if(_instance == null)
             {
                 GameObject obj = new GameObject();
-                obj.hideFlags = HideFlags.HideAndDontSave;
+                //obj.hideFlags = HideFlags.HideAndDontSave;
                 _instance = (T)obj.AddComponent(typeof(T));
+                DontDestroyOnLoad(obj);
             }
         }
         return _instance;
     }
 
-    public virtual void Awake()
+    protected virtual void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
         if (_instance == null)

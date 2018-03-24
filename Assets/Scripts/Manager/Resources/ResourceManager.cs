@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ResourceManager : Singleton<ResourceManager>
 {
-    //注册资源
+    //注册资源的路径
     public void RegisterResource(string resourceName, string resourcePath, bool pool = false)
     {
         if (this.m_Resources.ContainsKey(resourceName))
@@ -21,7 +21,7 @@ public class ResourceManager : Singleton<ResourceManager>
             }
         }
     }
-
+    //预加载资源
     public void PreWarm()
     {
         foreach(string resourceName in this.m_Resources.Keys)
@@ -35,7 +35,7 @@ public class ResourceManager : Singleton<ResourceManager>
         return this.m_Resources.ContainsKey(resourceName);
     }
 
-    public string GetResourcesByName(string resourceName)
+    public string GetResourcesPathByName(string resourceName)
     {
         if(!this.m_Resources.ContainsKey(resourceName))
         {
@@ -56,7 +56,7 @@ public class ResourceManager : Singleton<ResourceManager>
         {
             return this.m_ResourceCache[resourceName];
         }
-        UnityEngine.Object @object = Resources.Load(this.GetResourcesByName(resourceName));
+        UnityEngine.Object @object = Resources.Load(this.GetResourcesPathByName(resourceName));
         this.m_ResourceCache.Add(resourceName, @object);
         return @object;
     }
