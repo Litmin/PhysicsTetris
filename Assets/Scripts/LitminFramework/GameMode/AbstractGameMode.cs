@@ -2,15 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AbstractGameMode : MonoBehaviour {
+public class AbstractGameMode : MonoBehaviour
+{
 
-	// Use this for initialization
-	void Start () {
+	void Start ()
+    {
 		
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	void Update ()
+    {
+
+    }
+
+    protected bool IsGameOver()
+    {
+        return true;
+    }
 }

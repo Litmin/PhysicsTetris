@@ -2,15 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SurvivalGameMode : MonoBehaviour {
+public class SurvivalGameMode : AbstractGameMode
+{
+    //得分
+    public int Score;
 
-	// Use this for initialization
-	void Start () {
+
+
+	void Start ()
+    {
 		
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
 		
 	}
+
+
+
 }
