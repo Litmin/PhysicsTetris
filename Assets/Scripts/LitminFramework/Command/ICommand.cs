@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class AbstractGameMode
+public interface ICommand
 {
-
+    void excute(Player player);
 }

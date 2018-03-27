@@ -22,9 +22,11 @@ public class Brick : MonoBehaviour
 
     public event Action CollisionEnterEvent;
 
+    public event Action<Brick> FalloutScreen;
+
     private BrickState m_BrickState;
 
-    private RotateState m_RotateState;
+    public RotateState m_RotateState;
 
     private Rigidbody2D m_Rigidbody;
 
@@ -46,7 +48,6 @@ public class Brick : MonoBehaviour
     public BrickMoveTrigger m_DownTriggerOneEightZero;
     public BrickMoveTrigger m_DownTriggerTwoSevenZero;
 
-
     //旋转的Trigger
     public BrickRotateTrigger m_RotateTrigger;
 
@@ -64,7 +65,6 @@ public class Brick : MonoBehaviour
     private void Awake()
     {
         m_BrickState = BrickState.Falling;
-        m_RotateState = RotateState.zero;
 
         m_Pause = false;
 
@@ -121,7 +121,17 @@ public class Brick : MonoBehaviour
 	
 	private void Update ()
     {
-
+        //方块掉出屏幕
+        if(transform.localPosition.y < -50)
+        {
+            m_Rigidbody.constraints = RigidbodyConstraints2D.FreezePosition;
+            m_Rigidbody.Sleep();
+            if(FalloutScreen != null)
+            {
+                FalloutScreen(this);
+            }
+            Destroy(gameObject);
+        }
 	}
     private void FixedUpdate()
     {
@@ -257,7 +267,6 @@ public class Brick : MonoBehaviour
                     }
                     return true;
                 }
-                break;
             case RotateState.Ninety:
                 if (left)
                 {
@@ -281,7 +290,6 @@ public class Brick : MonoBehaviour
                     }
                     return true;
                 }
-                break;
             case RotateState.OneEightZero:
                 if (left)
                 {
@@ -305,7 +313,6 @@ public class Brick : MonoBehaviour
                     }
                     return true;
                 }
-                break;
             case RotateState.TwoSevenZero:
                 if (left)
                 {
@@ -329,10 +336,8 @@ public class Brick : MonoBehaviour
                     }
                     return true;
                 }
-                break;
             default:
                 return true;
-                break;
         }
     }
 

@@ -1,24 +1,27 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SurvivalGameMode : AbstractGameMode
+public class SurvivalGameMode :AbstractGameMode
 {
-    //得分
-    public int Score;
+    private int deadLine;
 
+    private int FalloutCount = 0;
 
-
-	void Start ()
+    private bool CheckGameEnd(Player player)
     {
-		
-	}
-	
-	void Update ()
-    {
-		
-	}
+        if(FalloutCount >= 3)
+        {
+            return true;
+        }
+        return false;
+    }
 
+    public void BindFalloutScreenEvent(Brick brick)
+    {
+        brick.FalloutScreen += delegate { FalloutCount++; };
+    }
 
 
 }
