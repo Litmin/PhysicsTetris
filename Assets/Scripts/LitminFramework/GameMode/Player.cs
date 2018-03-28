@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class Player
 {
@@ -17,9 +18,9 @@ public class Player
         Z = 6
     }
 
-    public event Action OnChangeNextBrickView;
+    public event Action<int> OnChangeNextBrickView;
 
-    public event Action<Brick> OnGenBrick;
+    public event Action OnBrickFallOut;
 
     //本次得分
     public int Score;
@@ -86,6 +87,11 @@ public class Player
         m_AllBricks.Add(brick);
     }
 
+    public void GameEnd()
+    {
+
+    }
+
     public void Pause()
     {
         foreach(var brick in m_AllBricks)
@@ -104,10 +110,12 @@ public class Player
 
     public Brick GenBrick()
     {
+        //播放生成音效
+        AudioManager.instance.PlaySfx("Sfx_BrickSpawn");
         if(firstGen)
         {
             firstGen = false;
-            NextBrickType = (BrickType)_Random(0, 6);
+            NextBrickType = (BrickType)_Random(0, 7);
         }
         GameObject brickObj;
         switch(NextBrickType)
@@ -137,7 +145,7 @@ public class Player
                 brickObj = GameObject.Instantiate(BrickIprefab) as GameObject;
                 break;
         }
-        var RandomRotate = _Random(0, 3);
+        var RandomRotate = _Random(0, 4);
         brickObj.transform.parent = BrickParent;
         Brick brickCom = brickObj.GetComponent<Brick>();
         switch (RandomRotate)
@@ -161,20 +169,15 @@ public class Player
         }
         brickObj.transform.localPosition = BrickGenPoint;
 
-        NextBrickType = (BrickType)_Random(0, 6);
+        NextBrickType = (BrickType)_Random(0, 7);
         //更改图标
         if(OnChangeNextBrickView != null)
         {
-            OnChangeNextBrickView();
+            OnChangeNextBrickView((int)NextBrickType);
         }
 
         brickCom.CollisionEnterEvent += HandleBrickFall2Physics;
         brickCom.FalloutScreen += HandleBrickFalloutScreen;
-
-        if(OnGenBrick != null)
-        {
-            OnGenBrick(brickCom);
-        }
 
         return brickCom;
     }
@@ -184,6 +187,9 @@ public class Player
         var brick = GenBrick();
         ControlBrick = brick;
         m_AllBricks.Add(brick);
+        //摄像机抖动
+        Camera.main.transform.DOShakePosition(0.2f, 2f);
+
         //计算最高的方块
         //更新生成方块的高度
         //更新摄像机位置
@@ -202,10 +208,15 @@ public class Player
             //更新摄像机位置
         }
         m_AllBricks.Remove(_brick);
+
+        if(OnBrickFallOut != null)
+        {
+            OnBrickFallOut();
+        }
     }
 
     //生成随机数
-    private int _Random(int min,int max)
+    public int _Random(int min,int max)
     {
         return random.Next(min, max);
     }

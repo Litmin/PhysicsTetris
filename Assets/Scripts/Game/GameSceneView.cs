@@ -6,13 +6,21 @@ using System;
 
 public class GameSceneView : MonoBehaviour
 {
+    //游戏背景
+    public Canvas bgCanvas;
+    private void Start()
+    {
+        //设置游戏背景canvas对象的camera
+        bgCanvas.worldCamera = Camera.main;
+    }
     public GameObject heart1;
     public GameObject heart2;
     public GameObject heart3;
 
+    //改变生命值
     public void ChangeHeartCount(int num)
     {
-        switch(num)
+        switch(3 - num)
         {
             case 0:
                 heart1.SetActive(false);
@@ -38,6 +46,16 @@ public class GameSceneView : MonoBehaviour
                 break;
         }
     }
+    public Image[] NextBrickIcons;
+    //修改下次方块的图标
+    public void ChangeNextBrickIcon(int num)
+    {
+        foreach(var brickImage in NextBrickIcons)
+        {
+            brickImage.gameObject.SetActive(false);
+        }
+        NextBrickIcons[num].gameObject.SetActive(true);
+    }
 
     //游戏结束菜单
     public GameObject GameEndMenu;
@@ -49,7 +67,7 @@ public class GameSceneView : MonoBehaviour
 
     }
 
-    public void HandleGameStart()
+    public void HandleGameRestart()
     {
         //移出菜单
     }

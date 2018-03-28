@@ -39,20 +39,26 @@ public class AudioManager : MonoBehaviourSingleton<AudioManager>
 
     private void Update()
     {
-        foreach(var audioController in m_SfxControllers)
+        for(int i = 0;i< m_SfxControllers.Count;i++)
         {
-            if(audioController != null)
+            if(m_SfxControllers[i] != null)
             {
-                audioController.Update();
+                m_SfxControllers[i].Update();
             }
         }
-        foreach(var audioController in m_MusicControllers)
+        for(int i = 0;i < m_MusicControllers.Count;i++)
         {
-            if(audioController != null)
+            if(m_MusicControllers[i] != null)
             {
-                audioController.Update();
+                m_MusicControllers[i].Update();
             }
         }
+    }
+
+    private void LateUpdate()
+    {
+        m_MusicAudioNamePlayerThisFrame.Clear();
+        m_SfxAudioNamePlayedThisFrame.Clear();
     }
 
     public float musicVolume

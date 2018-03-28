@@ -62,6 +62,9 @@ public class Brick : MonoBehaviour
     //暂停
     private bool m_Pause;
 
+    //方块是否与下方的方块碰撞
+    private bool CollisionWithDown = true;
+
     private void Awake()
     {
         m_BrickState = BrickState.Falling;
@@ -122,7 +125,7 @@ public class Brick : MonoBehaviour
 	private void Update ()
     {
         //方块掉出屏幕
-        if(transform.localPosition.y < -50)
+        if(transform.localPosition.y < -40)
         {
             m_Rigidbody.constraints = RigidbodyConstraints2D.FreezePosition;
             m_Rigidbody.Sleep();
@@ -130,6 +133,10 @@ public class Brick : MonoBehaviour
             {
                 FalloutScreen(this);
             }
+            //播放方块落水音效
+            int SfxIndex = UnityEngine.Random.Range(1, 5);
+            string SfxString = "Sfx_BrickFallWater0" + SfxIndex.ToString();
+            AudioManager.instance.PlaySfx(SfxString);
             Destroy(gameObject);
         }
 	}
@@ -198,7 +205,15 @@ public class Brick : MonoBehaviour
             {
                 collider.gameObject.SetActive(false);
             }
-            m_Rigidbody.gravityScale = 1;
+            m_Rigidbody.gravityScale = 2;
+
+            if(CollisionWithDown)
+            {
+                //播放方块碰撞音效
+                int SfxIndex = UnityEngine.Random.Range(1, 4);
+                string SfxString = "Sfx_BrickLandSpring0" + SfxIndex.ToString();
+                AudioManager.instance.PlaySfx(SfxString);
+            }
         }
     }
     
@@ -209,12 +224,15 @@ public class Brick : MonoBehaviour
         {
             if(CheckCanMove(left))
             {
-                transform.localPosition = new Vector3(transform.localPosition.x - 2,
+                transform.localPosition = new Vector3(transform.localPosition.x - 1,
                                                         transform.localPosition.y,
                                                         transform.localPosition.z);
+                AudioManager.instance.PlaySfx("Sfx_MoveBrick");
             }
             else
             {
+                AudioManager.instance.PlaySfx("Sfx_NudgeBrick");
+                CollisionWithDown = false;
                 Fall2Physics();
                 //向左施加力
             }
@@ -223,12 +241,15 @@ public class Brick : MonoBehaviour
         {
             if(CheckCanMove(left))
             {
-                transform.localPosition = new Vector3(transform.localPosition.x + 2,
+                transform.localPosition = new Vector3(transform.localPosition.x + 1,
                                                         transform.localPosition.y,
                                                         transform.localPosition.z);
+                AudioManager.instance.PlaySfx("Sfx_MoveBrick");
             }
             else
             {
+                AudioManager.instance.PlaySfx("Sfx_NudgeBrick");
+                CollisionWithDown = false;
                 Fall2Physics();
                 //向右施加力
             }
@@ -344,7 +365,8 @@ public class Brick : MonoBehaviour
     //旋转
     public void Rotate()
     {
-        if(CheckCanRotate())
+        AudioManager.instance.PlaySfx("Sfx_Rotatebrick");
+        if (CheckCanRotate())
         {
             transform.Rotate(new Vector3(0, 0, -90));
         }

@@ -30,7 +30,6 @@ public class BrickRotateTrigger : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-
         OverLap = true;
     }
 

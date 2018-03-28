@@ -29,11 +29,11 @@ public class BrickMoveTrigger : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        m_OverLap = true;
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        
+        m_OverLap = false;
     }
 }

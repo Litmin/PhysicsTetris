@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class SurvivalGameMode :AbstractGameMode
 {
-    private int deadLine;
-
     private int FalloutCount = 0;
 
-    private bool CheckGameEnd(Player player)
+    public event Action<int> OnFalloutCountChange;
+
+    public override bool CheckGameEnd()
     {
         if(FalloutCount >= 3)
         {
@@ -18,10 +18,12 @@ public class SurvivalGameMode :AbstractGameMode
         return false;
     }
 
-    public void BindFalloutScreenEvent(Brick brick)
+    public void BrickFalloutEvent( )
     {
-        brick.FalloutScreen += delegate { FalloutCount++; };
+       FalloutCount++;
+        if(OnFalloutCountChange != null)
+        {
+            OnFalloutCountChange(FalloutCount);
+        }
     }
-
-
 }
