@@ -26,4 +26,9 @@ public class SurvivalGameMode :AbstractGameMode
             OnFalloutCountChange(FalloutCount);
         }
     }
+
+    public override void RestartGame()
+    {
+        FalloutCount = 0;
+    }
 }

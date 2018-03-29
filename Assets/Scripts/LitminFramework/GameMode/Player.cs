@@ -41,7 +41,7 @@ public class Player
     public BrickType NextBrickType;
 
     //游戏结束
-    public bool bGameOver;
+    public bool bGameOver = false;
 
     //方块prefab
     private UnityEngine.Object BrickIprefab;
@@ -87,9 +87,33 @@ public class Player
         m_AllBricks.Add(brick);
     }
 
+    public void RestartGame()
+    {
+        for(int i = 0;i < m_AllBricks.Count;i++)
+        {
+            GameObject.Destroy(m_AllBricks[i].gameObject);
+        }
+        ControlBrick = null;
+        m_AllBricks.Clear();
+        BrickGenPoint = new Vector3(0, 35, 0);
+        //设置随机数种子
+        RandomSeed = UnityEngine.Random.Range(1, 999);
+        random = new System.Random(RandomSeed);
+
+        bGameOver = false;
+
+        StartGame();
+    }
     public void GameEnd()
     {
-
+        foreach(var brick in m_AllBricks)
+        {
+            //固定位置
+            brick.m_Rigidbody.constraints = RigidbodyConstraints2D.FreezePosition;
+            brick.m_Rigidbody.Sleep();
+            //拉远镜头
+            bGameOver = true;
+        }
     }
 
     public void Pause()
@@ -184,40 +208,87 @@ public class Player
 
     private void HandleBrickFall2Physics()
     {
+        //计算最高的方块
+        float highest = CaculateHighestBrick();
+        //更新生成方块的高度
+        BrickGenPoint = new Vector3(0, highest + 50f, 0);
+        //更新摄像机位置
+        if (highest > -5f)
+        {
+            Camera.main.transform.DOMoveY(highest + 5f, 0.2f);
+        }
+        else
+        {
+            if (Camera.main.transform.localPosition.y > 10f)
+            {
+                Camera.main.transform.DOMoveY(highest + 5f, 0.2f);
+            }
+        }
+
         var brick = GenBrick();
         ControlBrick = brick;
         m_AllBricks.Add(brick);
         //摄像机抖动
         Camera.main.transform.DOShakePosition(0.2f, 2f);
-
-        //计算最高的方块
-        //更新生成方块的高度
-        //更新摄像机位置
     }
 
     private void HandleBrickFalloutScreen(Brick _brick)
     {
+        if (OnBrickFallOut != null)
+        {
+            OnBrickFallOut();
+        }
+
+        if (bGameOver)
+            return;
+
+        //计算最高的方块
+        float highest = CaculateHighestBrick();
+        //更新生成方块的高度
+        BrickGenPoint = new Vector3(0, highest + 50f, 0);
+        //更新摄像机位置
+        if (highest > -5f)
+        {
+            Camera.main.transform.DOMoveY(highest + 5f, 0.2f);
+        }
+        else
+        {
+            if (Camera.main.transform.localPosition.y > 10f)
+            {
+                Camera.main.transform.DOMoveY(highest + 5f, 0.2f);
+            }
+        }
+
         //处理方块掉出屏幕
-        if(_brick == ControlBrick)
+        if (_brick == ControlBrick)
         {
             var brick = GenBrick();
             ControlBrick = brick;
             m_AllBricks.Add(brick);
-            //计算最高的方块
-            //更新生成方块的高度
-            //更新摄像机位置
         }
-        m_AllBricks.Remove(_brick);
 
-        if(OnBrickFallOut != null)
-        {
-            OnBrickFallOut();
-        }
+        m_AllBricks.Remove(_brick);
     }
 
     //生成随机数
     public int _Random(int min,int max)
     {
         return random.Next(min, max);
+    }
+
+    public float CaculateHighestBrick()
+    {
+        float Highest = -15f;
+        foreach(var brick in m_AllBricks)
+        {
+            if(brick != ControlBrick)
+            {
+                if (brick.selfCollider.bounds.max.y > Highest)
+                {
+                    Highest = brick.selfCollider.bounds.max.y;
+                }
+            }
+        }
+        return Highest;
     }
 }

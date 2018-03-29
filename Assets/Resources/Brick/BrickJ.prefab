@@ -228,7 +228,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1466268407890406}
   m_LocalRotation: {x: -0, y: 0, z: -0.7071068, w: -0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -6.3718014, y: -8.136103, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4014885502014754}
@@ -321,8 +321,8 @@ Rigidbody2D:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1670710456789494}
-  m_BodyType: 0
-  m_Simulated: 0
+  m_BodyType: 1
+  m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
@@ -396,7 +396,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -1, y: -0.5}
+  m_Offset: {x: -1, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -421,7 +421,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.5, y: -1}
+  m_Offset: {x: 1, y: -1}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -446,7 +446,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -3.5, y: 1}
+  m_Offset: {x: -3, y: 1}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -496,7 +496,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 3.5, y: 0}
+  m_Offset: {x: 3, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -546,7 +546,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 2.5}
+  m_Offset: {x: 0, y: 2}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -571,7 +571,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 2, y: -2.5}
+  m_Offset: {x: 2, y: -2}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -603,33 +603,32 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: 61725553115540880}
     m_ColliderPaths:
-    - - X: 30000000
-        Y: -5
-      - X: 10000000
-        Y: -1
-      - X: 9999996
-        Y: -20000002
-      - X: 29999996
+    - - X: 30000008
+        Y: 0
+      - X: 10000002
+        Y: 0
+      - X: 10000002
+        Y: -20000004
+      - X: 30000008
         Y: -20000004
   - m_Collider: {fileID: 61097354312073616}
     m_ColliderPaths:
-    - - X: 30000004
-        Y: 19999996
-      - X: -29999996
+    - - X: 30000008
         Y: 20000004
-      - X: -30000000
-        Y: 5
-      - X: 30000000
-        Y: -5
+      - X: -30000008
+        Y: 20000004
+      - X: -30000008
+        Y: 0
+      - X: 30000008
+        Y: 0
   m_CompositePaths:
     m_Paths:
-    - - {x: 3, y: -0.0000005}
-      - {x: 3.0000005, y: 1.9999996}
-      - {x: -2.9999995, y: 2.0000005}
-      - {x: -3, y: 0.0000005}
-      - {x: 1, y: -0.0000002}
-      - {x: 0.9999996, y: -2.0000002}
-      - {x: 2.9999995, y: -2.0000005}
+    - - {x: 1.0000002, y: -2.0000005}
+      - {x: 3.000001, y: -2.0000005}
+      - {x: 3.000001, y: 2.0000005}
+      - {x: -3.000001, y: 2.0000005}
+      - {x: -3.000001, y: 0}
+      - {x: 1.0000002, y: 0}
   m_VertexDistance: 0.0005
 --- !u!66 &66933053316815282
 CompositeCollider2D:
@@ -650,32 +649,34 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: 61510166751874578}
     m_ColliderPaths:
-    - - X: 30000000
-        Y: 0
-      - X: 10000000
-        Y: 0
-      - X: 10000000
-        Y: -20000000
-      - X: 30000000
-        Y: -20000000
+    - - X: 29925004
+        Y: -19924996
+      - X: 29925000
+        Y: -74994
+      - X: 10074999
+        Y: -74998
+      - X: 10075003
+        Y: -19924998
   - m_Collider: {fileID: 61279985026323136}
     m_ColliderPaths:
-    - - X: 30000000
-        Y: 20000000
-      - X: -30000000
-        Y: 20000000
-      - X: -30000000
-        Y: 0
-      - X: 30000000
-        Y: 0
+    - - X: 29775000
+        Y: 75005
+      - X: 29774998
+        Y: 19925006
+      - X: -29775002
+        Y: 19924996
+      - X: -29775000
+        Y: 74994
   m_CompositePaths:
     m_Paths:
-    - - {x: 1, y: -2}
-      - {x: 3, y: -2}
-      - {x: 3, y: 2}
-      - {x: -3, y: 2}
-      - {x: -3, y: 0}
-      - {x: 1, y: 0}
+    - - {x: 2.9775, y: 0.0075005}
+      - {x: 2.9774997, y: 1.9925007}
+      - {x: -2.9775002, y: 1.9924996}
+      - {x: -2.9775, y: 0.0074994}
+    - - {x: 2.9925005, y: -1.9924996}
+      - {x: 2.9925, y: -0.0074994}
+      - {x: 1.0074999, y: -0.0074998}
+      - {x: 1.0075003, y: -1.9924998}
   m_VertexDistance: 0.0005
 --- !u!114 &114122758702792184
 MonoBehaviour:
@@ -766,6 +767,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RotateState: 0
+  m_Rigidbody: {fileID: 0}
   m_MoveTriggerZeroLeft:
   - {fileID: 114249797965107158}
   - {fileID: 114741240115370180}
@@ -791,6 +793,8 @@ MonoBehaviour:
   m_DownTriggerOneEightZero: {fileID: 0}
   m_DownTriggerTwoSevenZero: {fileID: 0}
   m_RotateTrigger: {fileID: 114122758702792184}
+  AllChildCollider: []
+  selfCollider: {fileID: 0}
 --- !u!212 &212803354658473602
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -28,7 +28,7 @@ public class Brick : MonoBehaviour
 
     public RotateState m_RotateState;
 
-    private Rigidbody2D m_Rigidbody;
+    public Rigidbody2D m_Rigidbody;
 
     //移动的Trigger
     public List<BrickMoveTrigger> m_MoveTriggerZeroLeft;
@@ -51,7 +51,9 @@ public class Brick : MonoBehaviour
     //旋转的Trigger
     public BrickRotateTrigger m_RotateTrigger;
 
-    private List<Collider2D> AllChildCollider;
+    public List<Collider2D> AllChildCollider;
+
+    public Collider2D selfCollider;
     //下落
     private float m_FallSpeed;
     private float m_FallNomralSpeed;
@@ -88,10 +90,21 @@ public class Brick : MonoBehaviour
                 AllChildCollider.Add(collider);
             }
         }
-        var selfCollider = GetComponent<Collider2D>();
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            var collider = transform.GetChild(i).gameObject.GetComponent<BoxCollider2D>();
+            if (collider != null)
+            {
+                AllChildCollider.Add(collider);
+            }
+        }
+        selfCollider = GetComponent<CompositeCollider2D>();
         for (int i = 0; i < AllChildCollider.Count; i++)
         {
             Physics2D.IgnoreCollision(AllChildCollider[i], selfCollider);
+        }
+        for (int i = 0; i < AllChildCollider.Count-1; i++)
+        {
             for (int j = i + 1; j < AllChildCollider.Count; j++)
             {
                 Physics2D.IgnoreCollision(AllChildCollider[i], AllChildCollider[j]);
@@ -235,6 +248,7 @@ public class Brick : MonoBehaviour
                 CollisionWithDown = false;
                 Fall2Physics();
                 //向左施加力
+                m_Rigidbody.AddForce(new Vector2(-20f, 0f), ForceMode2D.Impulse);
             }
         }
         else if(left != true)
@@ -252,6 +266,7 @@ public class Brick : MonoBehaviour
                 CollisionWithDown = false;
                 Fall2Physics();
                 //向右施加力
+                m_Rigidbody.AddForce(new Vector2(20f, 0f), ForceMode2D.Impulse);
             }
         }
     }

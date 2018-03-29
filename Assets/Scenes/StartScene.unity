@@ -324,8 +324,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1127543819}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 197.5, y: 351.5, z: 0}
-  m_LocalScale: {x: 0.36574075, y: 0.36574075, z: 0.36574075}
+  m_LocalPosition: {x: 193, y: 343.5, z: 0}
+  m_LocalScale: {x: 0.35740742, y: 0.35740742, z: 0.35740742}
   m_Children:
   - {fileID: 379173727}
   m_Father: {fileID: 0}
@@ -375,14 +375,39 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 224523504956706728, guid: f9ee382add026274b95f02cb4f88a431,
+    - target: {fileID: 224096013603482932, guid: f9ee382add026274b95f02cb4f88a431,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.0015717
+      objectReference: {fileID: 0}
+    - target: {fileID: 224096013603482932, guid: f9ee382add026274b95f02cb4f88a431,
+        type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 1081.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 224096013603482932, guid: f9ee382add026274b95f02cb4f88a431,
         type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.000015258789
       objectReference: {fileID: 0}
-    - target: {fileID: 224523504956706728, guid: f9ee382add026274b95f02cb4f88a431,
+    - target: {fileID: 224096013603482932, guid: f9ee382add026274b95f02cb4f88a431,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.0083313
+      objectReference: {fileID: 0}
+    - target: {fileID: 224096013603482932, guid: f9ee382add026274b95f02cb4f88a431,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 1922.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224096013603482932, guid: f9ee382add026274b95f02cb4f88a431,
         type: 2}
       propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 223633791671831430, guid: f9ee382add026274b95f02cb4f88a431,
+        type: 2}
+      propertyPath: m_RenderMode
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

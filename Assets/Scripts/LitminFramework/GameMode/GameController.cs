@@ -36,6 +36,10 @@ public class GameController : MonoBehaviour
     public event Action OnGameEnd;
     //游戏重新开始事件
     public event Action OnGameRestart;
+    //分数变化
+    public event Action<int> OnScoreChange;
+
+    public bool bGameEnd = false;
 
 	void Start ()
     {
@@ -72,8 +76,11 @@ public class GameController : MonoBehaviour
         uiView.OnSpeedDown += this.SpeedDown;
         uiView.OnRotate += this.Rotate;
 
+        uiView.OnRestart += this.Restart;
+
         OnGameEnd += uiView.HandleGameEnd;
-        OnGameRestart += uiView.HandleGameRestart;
+        OnGameRestart += uiView.GameEndMenuMoveOut;
+        OnScoreChange += uiView.HandleScoreChange;
         m_Players[0].OnChangeNextBrickView += uiView.ChangeNextBrickIcon;
 
         //开始游戏
@@ -89,14 +96,22 @@ public class GameController : MonoBehaviour
     {
         FramesPast++;
 
-        if(m_GameMode.CheckGameEnd())
+        if(!bGameEnd && m_GameMode.CheckGameEnd())
         {
+            bGameEnd = true;
             //游戏结束
             if(OnGameEnd != null)
             {
                 OnGameEnd();
             }
+     
             m_Players[0].GameEnd();
+            float highest = m_Players[0].CaculateHighestBrick();
+            m_Players[0].Score = (int)highest + 15;
+            if (OnScoreChange != null)
+            {
+                OnScoreChange(m_Players[0].Score);
+            }
         }
     }
 
@@ -116,8 +131,11 @@ public class GameController : MonoBehaviour
     //重新开始
     public void Restart()
     {
-
+        m_Players[0].RestartGame();
+        m_GameMode.RestartGame();
+        bGameEnd = false;
     }
+
 
     //左移
     public void MoveLeft()
@@ -158,4 +176,5 @@ public class GameController : MonoBehaviour
             return;
         new RotateCommand().excute(m_Players[0]);
     }
+
 }

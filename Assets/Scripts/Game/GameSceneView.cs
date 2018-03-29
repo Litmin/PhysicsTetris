@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using DG.Tweening;
 
 public class GameSceneView : MonoBehaviour
 {
@@ -59,17 +60,29 @@ public class GameSceneView : MonoBehaviour
 
     //游戏结束菜单
     public GameObject GameEndMenu;
-    public GameObject GameEndMenuBlackTex;
+    public Image GameEndMenuBlackTex;
 
     public void HandleGameEnd()
     {
         //弹出菜单
-
+        GameEndMenuBlackTex.DOFade(0.3f, 0.3f).SetDelay(1.0f);
+        GameEndMenu.GetComponent<RectTransform>().DOLocalMoveY(250f, 0.7f).SetDelay(1.0f).SetEase(Ease.OutBack);
     }
 
-    public void HandleGameRestart()
+    //分数变化
+    public Text scoreText;
+    public void HandleScoreChange(int score)
+    {
+        scoreText.text = score.ToString();
+    }
+
+    public void GameEndMenuMoveOut()
     {
         //移出菜单
+        GameEndMenuBlackTex.DOFade(0, 0.3f);
+        GameEndMenu.GetComponent<RectTransform>().DOLocalMoveY(-1400f, 0.7f).SetEase(Ease.OutBack);
+
+        ChangeHeartCount(0);
     }
 
 
@@ -124,6 +137,36 @@ public class GameSceneView : MonoBehaviour
         {
             OnRotate();
         }
+    }
+
+    public event Action OnRestart;
+    //游戏结束后的操作
+    //重新开始
+    public void RestartBtnClick()
+    {
+        GameEndMenuMoveOut();
+        if (OnRestart != null)
+        {
+            OnRestart();
+        }
+    }
+
+    //观看回放
+    public void LookRecordClick()
+    {
+
+    }
+
+    //保存回放
+    public void SaveRecordClick()
+    {
+
+    }
+
+    //返回主界面
+    public void ReturnMainMenuClick()
+    {
+        LitminSceneManager.instance.LoadScene("MainMenuScene");
     }
 
 }
