@@ -23,8 +23,18 @@ public class GameController : MonoBehaviour
     //游戏经过的帧数
     public long FramesPast = 0;
 
-    //是否开启回放
+    //是否开启记录回放
     public bool Record = true;
+
+    //观看回放完成
+    public bool bLookRecordOver = false;
+
+    //玩家操作还是回放中
+    public bool bPlayerOperate = true;
+
+    private RecordFile m_RecordFile;
+
+    private int RecordOperateIndex = 0;
 
     //暂停
     public bool m_Pause = false;
@@ -77,6 +87,7 @@ public class GameController : MonoBehaviour
         uiView.OnRotate += this.Rotate;
 
         uiView.OnRestart += this.Restart;
+        uiView.OnLookRecordClick += this.StartLookRecord;
 
         OnGameEnd += uiView.HandleGameEnd;
         OnGameRestart += uiView.GameEndMenuMoveOut;
@@ -89,14 +100,16 @@ public class GameController : MonoBehaviour
         //播放音乐
         AudioManager.instance.StopAllMusic();
         AudioManager.instance.PlayMusic("Music_SurvivalGame");
+
+        m_RecordFile = new RecordFile();
+        m_RecordFile.randomSeed = m_Players[0].RandomSeed;
     }
 
-
+    System.Random a;
     void Update ()
     {
         FramesPast++;
-
-        if(!bGameEnd && m_GameMode.CheckGameEnd())
+        if (bPlayerOperate &&!bGameEnd && m_GameMode.CheckGameEnd())
         {
             bGameEnd = true;
             //游戏结束
@@ -104,6 +117,8 @@ public class GameController : MonoBehaviour
             {
                 OnGameEnd();
             }
+
+            m_RecordFile.GameEndFrame = FramesPast;
      
             m_Players[0].GameEnd();
             float highest = m_Players[0].CaculateHighestBrick();
@@ -111,6 +126,56 @@ public class GameController : MonoBehaviour
             if (OnScoreChange != null)
             {
                 OnScoreChange(m_Players[0].Score);
+            }
+
+            AudioManager.instance.StopMusic("Music_SurvivalGame");
+            AudioManager.instance.PlayMusic("Sfx_Wingameloop");
+        }
+        if(!bPlayerOperate && bLookRecordOver == false)
+        {
+            if(FramesPast >= m_RecordFile.GameEndFrame)
+            {
+                bLookRecordOver = true;
+                //回放结束
+                if (OnGameEnd != null)
+                {
+                    OnGameEnd();
+                }
+                m_Players[0].GameEnd();
+                AudioManager.instance.StopMusic("Music_SurvivalGame");
+                AudioManager.instance.PlayMusic("Sfx_Wingameloop");
+            }
+            else
+            {
+                if (RecordOperateIndex < m_RecordFile.OperateCommandList.Count)
+                {
+                    //还有操作
+                    if(FramesPast >= m_RecordFile.OperateCommandList[RecordOperateIndex].frame)
+                    {
+                        switch (m_RecordFile.OperateCommandList[RecordOperateIndex].m_OperateCommand)
+                        {
+                            case RecordFile.OperateCommand.MoveLeft:
+                                MoveLeft();
+                                break;
+                            case RecordFile.OperateCommand.MoveRight:
+                                MoveRight();
+                                break;
+                            case RecordFile.OperateCommand.SpeedUp:
+                                SpeedUp();
+                                break;
+                            case RecordFile.OperateCommand.SpeedDown:
+                                SpeedDown();
+                                break;
+                            case RecordFile.OperateCommand.Rotate:
+                                Rotate();
+                                break;
+                            default:
+                                break;
+                        }
+                        RecordOperateIndex++;
+                    }
+                }
+
             }
         }
     }
@@ -132,8 +197,41 @@ public class GameController : MonoBehaviour
     public void Restart()
     {
         m_Players[0].RestartGame();
+        m_Players[0].StartGame();
+
+        m_RecordFile.randomSeed = m_Players[0].RandomSeed;
+
         m_GameMode.RestartGame();
         bGameEnd = false;
+        AudioManager.instance.StopMusic("Sfx_Wingameloop");
+        AudioManager.instance.PlayMusic("Music_SurvivalGame");
+        FramesPast = 0;
+        bPlayerOperate = true;
+        m_RecordFile.OperateCommandList.Clear();
+
+        uiView.canOperate = true;
+    }
+    //开始回放
+    public void StartLookRecord()
+    {
+        bLookRecordOver = false;
+
+        m_Players[0].RestartGame();
+
+        m_Players[0].RandomSeed = m_RecordFile.randomSeed;
+        m_Players[0].random = new System.Random(m_Players[0].RandomSeed);
+
+        m_Players[0].StartGame();
+
+        m_GameMode.RestartGame();
+        bGameEnd = false;
+        AudioManager.instance.StopMusic("Sfx_Wingameloop");
+        AudioManager.instance.PlayMusic("Music_SurvivalGame");
+        FramesPast = 0;
+        bPlayerOperate = false;
+        RecordOperateIndex = 0;
+
+        uiView.canOperate = false;
     }
 
 
@@ -143,6 +241,10 @@ public class GameController : MonoBehaviour
         if (m_Players[0].bGameOver || m_Pause)
             return;
         new MoveLeftCommand().excute(m_Players[0]);
+        if(Record && bPlayerOperate)
+        {
+            m_RecordFile.AddMoveLeftCommand(FramesPast);
+        }
     }
 
     //右移
@@ -151,6 +253,10 @@ public class GameController : MonoBehaviour
         if (m_Players[0].bGameOver || m_Pause)
             return;
         new MoveRightCommand().excute(m_Players[0]);
+        if (Record && bPlayerOperate)
+        {
+            m_RecordFile.AddMoveRightCommand(FramesPast);
+        }
     }
 
     //加速
@@ -159,6 +265,10 @@ public class GameController : MonoBehaviour
         if (m_Players[0].bGameOver || m_Pause)
             return;
         new SpeedUpCommand().excute(m_Players[0]);
+        if (Record && bPlayerOperate)
+        {
+            m_RecordFile.AddSpeedUpCommand(FramesPast);
+        }
     }
 
     //减速
@@ -167,6 +277,10 @@ public class GameController : MonoBehaviour
         if (m_Players[0].bGameOver || m_Pause)
             return;
         new SpeedDownCommand().excute(m_Players[0]);
+        if (Record && bPlayerOperate)
+        {
+            m_RecordFile.AddSpeedDownCommand(FramesPast);
+        }
     }
 
     //旋转
@@ -175,6 +289,10 @@ public class GameController : MonoBehaviour
         if (m_Players[0].bGameOver || m_Pause)
             return;
         new RotateCommand().excute(m_Players[0]);
+        if (Record && bPlayerOperate)
+        {
+            m_RecordFile.AddRotateCommand(FramesPast);
+        }
     }
 
 }

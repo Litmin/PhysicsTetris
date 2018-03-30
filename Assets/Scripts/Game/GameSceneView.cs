@@ -65,8 +65,8 @@ public class GameSceneView : MonoBehaviour
     public void HandleGameEnd()
     {
         //弹出菜单
-        GameEndMenuBlackTex.DOFade(0.3f, 0.3f).SetDelay(1.0f);
-        GameEndMenu.GetComponent<RectTransform>().DOLocalMoveY(250f, 0.7f).SetDelay(1.0f).SetEase(Ease.OutBack);
+        GameEndMenuBlackTex.DOFade(0.3f, 0.3f).SetDelay(3.0f);
+        GameEndMenu.GetComponent<RectTransform>().DOLocalMoveY(250f, 0.7f).SetDelay(3.0f).SetEase(Ease.OutBack);
     }
 
     //分数变化
@@ -87,14 +87,17 @@ public class GameSceneView : MonoBehaviour
 
 
     //游戏控制
-
+    public bool canOperate = true;
     //左移
     public event Action OnMoveLeft;
     public void MoveLeftBtnClick()
     {
-        if(OnMoveLeft != null)
+        if(canOperate)
         {
-            OnMoveLeft();
+            if (OnMoveLeft != null)
+            {
+                OnMoveLeft();
+            }
         }
     }
 
@@ -102,9 +105,12 @@ public class GameSceneView : MonoBehaviour
     public event Action OnMoveRight;
     public void MoveRightBtnClick()
     {
-        if(OnMoveRight != null)
+        if (canOperate)
         {
-            OnMoveRight();
+            if (OnMoveRight != null)
+            {
+                OnMoveRight();
+            }
         }
     }
 
@@ -112,9 +118,12 @@ public class GameSceneView : MonoBehaviour
     public event Action OnSpeedUp;
     public void SpeedUpBtnClick()
     {
-        if(OnSpeedUp != null)
+        if (canOperate)
         {
-            OnSpeedUp();
+            if (OnSpeedUp != null)
+            {
+                OnSpeedUp();
+            }
         }
     }
 
@@ -122,9 +131,12 @@ public class GameSceneView : MonoBehaviour
     public event Action OnSpeedDown;
     public void SpeedDownBtnClick()
     {
-        if(OnSpeedDown != null)
+        if (canOperate)
         {
-            OnSpeedDown();
+            if (OnSpeedDown != null)
+            {
+                OnSpeedDown();
+            }
         }
     }
 
@@ -133,9 +145,12 @@ public class GameSceneView : MonoBehaviour
     public event Action OnRotate;
     public void RotateBtnClick()
     {
-        if(OnRotate != null)
+        if (canOperate)
         {
-            OnRotate();
+            if (OnRotate != null)
+            {
+                OnRotate();
+            }
         }
     }
 
@@ -152,8 +167,14 @@ public class GameSceneView : MonoBehaviour
     }
 
     //观看回放
+    public event Action OnLookRecordClick;
     public void LookRecordClick()
     {
+        GameEndMenuMoveOut();
+        if(OnLookRecordClick != null)
+        {
+            OnLookRecordClick();
+        }
 
     }
 

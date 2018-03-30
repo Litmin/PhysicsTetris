@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
+using UnityEngine;
 
 public class GameRoot : MonoBehaviourSingleton<GameRoot>
 {
+
     public void Init()
     {
         //初始化游戏的所有资源

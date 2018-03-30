@@ -58,13 +58,14 @@ public class Player
     private bool firstGen = true;
 
     //用来产生随机数的种子
-    private int RandomSeed;
-    private System.Random random;
+    public int RandomSeed;
+    public System.Random random;
     public Player()
     {
         //设置随机数种子
         RandomSeed = UnityEngine.Random.Range(1, 999);
         random = new System.Random(RandomSeed);
+
 
         //加载prefab  多人游戏需修改
         BrickIprefab = Resources.Load("Brick/BrickI");
@@ -91,6 +92,7 @@ public class Player
     {
         for(int i = 0;i < m_AllBricks.Count;i++)
         {
+            if(m_AllBricks[i].gameObject != null)
             GameObject.Destroy(m_AllBricks[i].gameObject);
         }
         ControlBrick = null;
@@ -102,7 +104,10 @@ public class Player
 
         bGameOver = false;
 
-        StartGame();
+        //更新摄像机位置
+        Camera.main.transform.localPosition = new Vector3(0, 0, -10);
+
+        firstGen = true;
     }
     public void GameEnd()
     {
@@ -134,6 +139,7 @@ public class Player
 
     public Brick GenBrick()
     {
+       // aaa = new System.Random(1);
         //播放生成音效
         AudioManager.instance.PlaySfx("Sfx_BrickSpawn");
         if(firstGen)
@@ -273,7 +279,7 @@ public class Player
     //生成随机数
     public int _Random(int min,int max)
     {
-        return random.Next(min, max);
+        return random.Next(min,max);
     }
 
     public float CaculateHighestBrick()

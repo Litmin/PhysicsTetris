@@ -73,7 +73,7 @@ public class Brick : MonoBehaviour
 
         m_Pause = false;
 
-        m_FallNomralSpeed = 10f;
+        m_FallNomralSpeed = 5f;
         m_FallMaxSpeed = 25f;
         m_FallSpeed = m_FallNomralSpeed;
 
@@ -137,6 +137,7 @@ public class Brick : MonoBehaviour
 	
 	private void Update ()
     {
+
         //方块掉出屏幕
         if(transform.localPosition.y < -40)
         {
@@ -402,12 +403,13 @@ public class Brick : MonoBehaviour
     {
         StopCoroutine(FallSpeedToNormalCoroutine());
         StartCoroutine(FallSpeedToMaxCoroutine());
+
     }
     private IEnumerator FallSpeedToMaxCoroutine()
     {
-        for(int i = 0;i < 60;i++)
+        for(int i = 0;i < 20;i++)
         {
-            m_FallSpeed = Mathf.Lerp(m_FallSpeed, m_FallMaxSpeed, i / 60);
+            m_FallSpeed = Mathf.Lerp(m_FallMaxSpeed, m_FallSpeed, i / 60);
             yield return new WaitForSeconds(0.01f);
         }
     }
@@ -419,9 +421,9 @@ public class Brick : MonoBehaviour
     }
     private IEnumerator FallSpeedToNormalCoroutine()
     {
-        for (int i = 0; i < 60; i++)
+        for (int i = 0; i < 20; i++)
         {
-            m_FallSpeed = Mathf.Lerp(m_FallSpeed, m_FallNomralSpeed, i / 60);
+            m_FallSpeed = Mathf.Lerp(m_FallNomralSpeed, m_FallSpeed, i / 60);
             yield return new WaitForSeconds(0.01f);
         }
     }
