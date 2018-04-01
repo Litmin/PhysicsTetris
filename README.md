@@ -7,4 +7,4 @@
 
 使用Unity2017.2开发。
 
- ![image](https://github.com/Litmin/PhysicsTetris/blob/master/Ha.jpg)
+ ![image](https://github.com/Litmin/PhysicsTetris/blob/master/Ha2.jpg)
