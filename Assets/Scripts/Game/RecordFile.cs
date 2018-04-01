@@ -12,7 +12,7 @@ public class RecordFile
         SpeedDown,
         Rotate
     }
-
+    
     //游戏结束时经过的帧数
     public long GameEndFrame;
     //本局游戏的随机数种子

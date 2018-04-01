@@ -121,8 +121,7 @@ public class GameController : MonoBehaviour
             m_RecordFile.GameEndFrame = FramesPast;
      
             m_Players[0].GameEnd();
-            float highest = m_Players[0].CaculateHighestBrick();
-            m_Players[0].Score = (int)highest + 15;
+            m_Players[0].Score = m_Players[0].m_AllBricks.Count;
             if (OnScoreChange != null)
             {
                 OnScoreChange(m_Players[0].Score);
